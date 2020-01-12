@@ -5,6 +5,7 @@ package Softip.Spring;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,9 @@ public class PropertyController {
     @Autowired
     private
     PropertyRepositery propertyRepositery;
+
+    @Autowired
+    ApplicationArguments appArgs;
 
     String home = "<a href=\"/\">\n" +
             "      <H1>Home</H1>\n" +
@@ -66,26 +70,29 @@ public class PropertyController {
         }
 
     @GetMapping("/add")
-    public String add (){
+    public String add () throws FileNotFoundException {
+
+        ArrayList<String> inputs = CheckInputs.checkInputs(appArgs.getSourceArgs());
+        System.out.println("ARG: "+inputs);
         String result = "<html>";
         ArrayList<Property> properties = null;
-        try {
-            properties =  ReadCsv.readProperty("inventuraVzor1.csv");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
-        for (Property p : properties){
-            try{
-             propertyRepositery.save(p);
-            } catch (Exception e) {
-                System.out.println("Do databazy neboli pridane: "+p);
-                logger.warn("Do databazy nebol pridany objekt: "+ p.toString());
+        int i;
+        for (i = 0; i < inputs.size(); i++) {
+            properties = ReadCsv.readProperty(inputs.get(i));
+            for (Property p : properties) {
+                try {
+                    propertyRepositery.save(p);
+                } catch (Exception e) {
+                    System.out.println("Do databazy neboli pridane: " + p);
+                    logger.warn("Do databazy nebol pridany objekt: " + p.toString()+" zo subora: "+ inputs.get(i));
+                }
             }
         }
-            result += " Pridane do databazy ";
+        result += " Pridane do databazy ";
         result += home;
-        return result+"</html>";
+        return result + "</html>";
     }
+
 
 }
