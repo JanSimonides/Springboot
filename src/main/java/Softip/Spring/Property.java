@@ -26,7 +26,7 @@ public class Property implements Serializable {
     private float propertyPrice;
     @Column(name = "property_In_date", nullable = false)
     private LocalDate propertyInDate;
-    @Column(name = "property_Out_date", unique = true)
+    @Column(name = "property_Out_date")
     private LocalDate propertyOutDate;
     @Column(name = "property_State")
     private char propertyState;

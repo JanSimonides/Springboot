@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: Spring
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: qwe
+  jpa:
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8081
+directory : C:\Users\jansi\IdeaProjects\testSpringboot\src\main\resources\Files

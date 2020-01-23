@@ -10,19 +10,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReadCsv {
     private final static Logger logger = Logger.getLogger(ReadCsv.class);
-    public static ArrayList<Property> readProperty(String fileName) throws FileNotFoundException {
+    public static ArrayList<Property> readProperty(String fileName, String directory) throws FileNotFoundException {
         ArrayList<Property> properties = new ArrayList<>();
         BufferedReader br= null;
         String line;
         String[] parameters;
             //System.out.println(fileName);
-            String path = System.getProperty("user.dir");
+            //String path = System.getProperty("user.dir");
             String separator = File.separator;
             //path = path.substring(0,path.length()-6);
-            Path pathToFile = Paths.get(path+separator+"classes"+separator+ "Files" +separator+fileName);
+
+            Path pathToFile = Paths.get(directory +separator+fileName);
             //System.out.println(pathToFile);
             //kontrola vstupneho suboru
             File file = new File(String.valueOf(pathToFile));
