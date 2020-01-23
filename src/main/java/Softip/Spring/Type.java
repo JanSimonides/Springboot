@@ -1,31 +1,49 @@
 package Softip.Spring;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "type")
 public class Type  implements Serializable {
     private static  final long serialVersionUID = 1L;
-    @Id
-    @Column(name = "ID_type", unique = true, nullable = false)
-    private int ID_types;
+    @Id @GeneratedValue
+    private  long id_type;
+    @Column(name = "int_type", unique = true, nullable = false)
+    private int int_type;
+    @Column(name = "description")
+    private String description;
 
-    public Type(int i) {
-        this.ID_types = i;
+    public Type(int int_type, String description) {
+        this.int_type = int_type;
+        this.description = description;
     }
 
-    public Type() {
+    public Type(){
+
     }
 
-    public int getID_types() {
-        return ID_types;
+    public long getId_type() {
+        return id_type;
     }
 
-    public void setID_types(int ID_types) {
-        this.ID_types = ID_types;
+    public void setId_type(long id_type) {
+        this.id_type = id_type;
+    }
+
+    public int getInt_type() {
+        return int_type;
+    }
+
+    public void setInt_type(int int_type) {
+        this.int_type = int_type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

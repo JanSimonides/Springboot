@@ -42,11 +42,11 @@ public class PropertyController {
             "    </a>";
     @PostConstruct
     public  void init (){
-        Type type0 = new Type(0);
-        Type type1 = new Type(1);
-        State state3= new State('V');
-        State state2 = new State('M');
-        State state1 = new State('O');
+        Type type0 = new Type(0,"Popis");
+        Type type1 = new Type(1,"Popis");
+        State state3= new State('V',"Popis");
+        State state2 = new State('M',"Popis");
+        State state1 = new State('O',"Popis");
 
         try {
             stateRepositery.save(state1);
