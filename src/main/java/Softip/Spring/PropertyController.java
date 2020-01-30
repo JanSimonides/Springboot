@@ -2,9 +2,7 @@ package Softip.Spring;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -12,7 +10,9 @@ import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class PropertyController {
@@ -44,9 +44,9 @@ public class PropertyController {
     public  void init (){
         Type type0 = new Type(0,"Popis");
         Type type1 = new Type(1,"Popis");
-        State state3= new State('V',"Popis");
-        State state2 = new State('M',"Popis");
-        State state1 = new State('O',"Popis");
+        State state3= new State('V',"Moved");
+        State state2 = new State('M',"Missing");
+        State state1 = new State('O',"Ok");
 
         try {
             stateRepositery.save(state1);
@@ -57,6 +57,8 @@ public class PropertyController {
         }catch (Exception e){
 
         }
+
+
     }
 
     @GetMapping("/")
@@ -68,7 +70,7 @@ public class PropertyController {
 
 
     @GetMapping(path="/all")
-    public @ResponseBody  List<Property> getAllTrack() {
+    public @ResponseBody  List<Property> findall() {
         return propertyRepositery.findAll();
     }
 
@@ -110,11 +112,12 @@ public class PropertyController {
         for (i = 0; i < inputs.size(); i++) {
             properties = ReadCsv.readProperty(inputs.get(i),yamlCfg.getDirectory());
             for (Property p : properties) {
+                System.out.println(1);
                 try {
                     propertyRepositery.save(p);
                 } catch (Exception e) {
                     System.out.println("Do databazy neboli pridane: " + p);
-                    logger.warn("Do databazy nebol pridany objekt: " + p.toString()+" zo subora: "+ inputs.get(i));
+                    logger.warn("Do databazy nebol pridany objekt: " + p.toString() + " zo subora: " + inputs.get(i));
                 }
             }
         }

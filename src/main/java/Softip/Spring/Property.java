@@ -1,9 +1,6 @@
 package Softip.Spring;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.Column;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
@@ -28,8 +25,12 @@ public class Property implements Serializable {
     private LocalDate propertyInDate;
     @Column(name = "property_Out_date")
     private LocalDate propertyOutDate;
-    @Column(name = "property_State")
-    private char propertyState;
+    @ManyToOne
+    @JoinColumn(name="property_state", nullable = false)
+    private State propertyState;
+
+
+
 
     public Property(){
 
@@ -50,7 +51,8 @@ public class Property implements Serializable {
         this.propertyType = Integer.parseInt(parameters[3]);
         this.propertyPrice = Float.parseFloat(parameters[4].substring(0, parameters[4].length() - 3).replace(",","."));
         this.propertyInDate =LocalDate.parse(parameters[5].substring(0,4)+"-" + parameters[5].substring(4,6)+"-"+ parameters[5].substring(6,8));
-        this.propertyState = parameters[7].charAt(0);
+        this.propertyState = new State(parameters[7].charAt(0),"popis");
+
     }
 
     public int getPropertyId() {
@@ -109,11 +111,11 @@ public class Property implements Serializable {
         this.propertyOutDate = propertyOutDate;
     }
 
-    public char getPropertyState() {
+    public State getPropertyState() {
         return propertyState;
     }
 
-    public void setPropertyState(char propertyState) {
+    public void setPropertyState(State propertyState) {
         this.propertyState = propertyState;
     }
 
