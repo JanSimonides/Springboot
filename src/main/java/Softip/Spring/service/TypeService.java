@@ -1,9 +1,9 @@
-package Softip.Spring;
+package Softip.Spring.service;
 
 
+import Softip.Spring.repository.PropertyRepositery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 @Service

@@ -1,5 +1,20 @@
-package Softip.Spring;
+package Softip.Spring.controller;
 
+import Softip.Spring.CheckInputs;
+import Softip.Spring.ReadCsv;
+import Softip.Spring.YamlCfg;
+import Softip.Spring.mapper.PropertyMapper;
+import Softip.Spring.mapper.StateMapper;
+import Softip.Spring.model.dto.PropertyDTO;
+import Softip.Spring.model.entity.Property;
+import Softip.Spring.model.entity.State;
+import Softip.Spring.model.entity.Type;
+import Softip.Spring.repository.PropertyDtoRepositery;
+import Softip.Spring.repository.PropertyRepositery;
+import Softip.Spring.repository.StateRepositery;
+import Softip.Spring.repository.TypeRepository;
+import Softip.Spring.service.PropertyService;
+import Softip.Spring.service.StateService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -10,9 +25,7 @@ import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 public class PropertyController {
@@ -21,7 +34,18 @@ public class PropertyController {
 
     @Autowired
     private
+    PropertyService propertyService;
+
+    @Autowired
+    private
+    StateService stateService;
+
+    @Autowired
+    private
     PropertyRepositery propertyRepositery;
+
+    @Autowired
+    private PropertyDtoRepositery propertyDtoRepositery;
 
     @Autowired
     private
@@ -33,6 +57,9 @@ public class PropertyController {
 
     @Autowired
     ApplicationArguments appArgs;
+
+    @Autowired
+    PropertyMapper propertyMapper;
 
     @Autowired
     private YamlCfg yamlCfg;
@@ -70,31 +97,31 @@ public class PropertyController {
 
 
     @GetMapping(path="/all")
-    public @ResponseBody  List<Property> findall() {
-        return propertyRepositery.findAll();
+    public List<PropertyDTO> findall() {
+        return propertyService.findAll() ;
     }
 
-    @GetMapping("/ok")
+    /*@GetMapping("/ok")
     public @ResponseBody List<Property>  findOk() {
-        return propertyRepositery.findByPropertyStateOrderByPropertyPriceDesc('O');
-    }
+        return propertyService.findOk('O');
+    }*/
 
-    @GetMapping("/moved")
+  /*  @GetMapping("/moved")
     public @ResponseBody List<Property> findMoved(){
 
-        return propertyRepositery.findByPropertyStateOrderByPropertyInDateAsc('V');
-    }
+        //return propertyRepositery.findByPropertyStateCharStateOrderByPropertyInDateAsc('V');
+    }*/
 
-    @GetMapping("/missing")
+    /*@GetMapping("/missing")
     public@ResponseBody List<Property> findMissing(){
         return propertyRepositery.findByPropertyStateOrderByPropertyPriceAsc('M');
-    }
-
+    }*/
+    /*
     @GetMapping("/removed")
     public @ResponseBody List<Property>findRemoved(){
             return propertyRepositery.findByPropertyOutDateNotNull();
         }
-
+*/
     @GetMapping("/add")
     public String add () throws FileNotFoundException {
 
@@ -106,15 +133,16 @@ public class PropertyController {
         }
         System.out.println("ARG: "+inputs);
         String result = "<html>";
-        ArrayList<Property> properties = null;
+        ArrayList<PropertyDTO> properties = null;
 
         int i;
         for (i = 0; i < inputs.size(); i++) {
             properties = ReadCsv.readProperty(inputs.get(i),yamlCfg.getDirectory());
-            for (Property p : properties) {
-                System.out.println(1);
+            for (PropertyDTO p : properties) {
                 try {
-                    propertyRepositery.save(p);
+                    p.setPropertyStateDTO(stateRepositery.findByCharState(p.getCharacter()));
+                    propertyRepositery.save(propertyMapper.toEntity(p));
+
                 } catch (Exception e) {
                     System.out.println("Do databazy neboli pridane: " + p);
                     logger.warn("Do databazy nebol pridany objekt: " + p.toString() + " zo subora: " + inputs.get(i));
@@ -125,6 +153,5 @@ public class PropertyController {
         result += home;
         return result + "</html>";
     }
-
 
 }

@@ -1,4 +1,4 @@
-package Softip.Spring;
+package Softip.Spring.model.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;

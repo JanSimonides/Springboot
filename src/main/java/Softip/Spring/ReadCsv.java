@@ -9,13 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
+import Softip.Spring.model.dto.PropertyDTO;
+import Softip.Spring.model.entity.Property;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ReadCsv {
     private final static Logger logger = Logger.getLogger(ReadCsv.class);
-    public static ArrayList<Property> readProperty(String fileName, String directory) throws FileNotFoundException {
-        ArrayList<Property> properties = new ArrayList<>();
+    public static ArrayList<PropertyDTO> readProperty(String fileName, String directory) throws FileNotFoundException {
+        ArrayList<PropertyDTO> properties = new ArrayList<>();
         BufferedReader br= null;
         String line;
         String[] parameters;
@@ -41,10 +43,9 @@ public class ReadCsv {
                     while (line != null) {
 
                         parameters = line.split(";");
+                        PropertyDTO propertyDTO = new PropertyDTO(parameters);
 
-                        Property property = new Property(parameters);
-
-                        properties.add(property);
+                        properties.add(propertyDTO);
 
                         line = br.readLine();
                     }
