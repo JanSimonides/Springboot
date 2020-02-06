@@ -3,8 +3,6 @@ package Softip.Spring.mapper;
 import Softip.Spring.model.dto.StateDTO;
 import Softip.Spring.model.entity.State;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 

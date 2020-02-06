@@ -44,13 +44,13 @@ public class CheckInputs {
 
         String[] input = String.join( " ", args ).split("[, ]");
         ArrayList<String> inputs = new ArrayList<String>();
-        FileWriter fileWriter = new FileWriter(String.valueOf(pathToFile),true);
+        FileWriter fileWriter = new FileWriter(String.valueOf(pathToFile),false);
         int i;
         for (i=0; i<input.length;i++){
             input[i]= input[i]+".csv";
             if (!inputs.contains(input[i]) && !used.contains(input[i])){
                 inputs.add(input[i]);
-                fileWriter.write(input[i]+'\n');
+                //fileWriter.write(input[i]+'\n');
             }
             else {
                 logger.warn("Pokus o opakovany import: "+input[i]);

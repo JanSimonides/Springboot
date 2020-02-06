@@ -1,49 +1,42 @@
 package Softip.Spring.model.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "type")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Type  implements Serializable {
     private static  final long serialVersionUID = 1L;
     @Id @GeneratedValue
-    private  long id_type;
+    private  long idType;
     @Column(name = "int_type", unique = true, nullable = false)
-    private int int_type;
+    private int intType;
     @Column(name = "description")
     private String description;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyType", cascade = CascadeType.ALL)
+    private Set<Property> typeProperties;
 
     public Type(int int_type, String description) {
-        this.int_type = int_type;
+        this.intType = int_type;
         this.description = description;
     }
 
-    public Type(){
+    /*public Type(int i, Property... properties) {
+        this.intType = i;
+        this.typeProperties = Stream.of(properties).collect(Collectors.toSet());
+        this.typeProperties.forEach(x -> x.setPropertyType(this));
+    }*/
 
-    }
-
-    public long getId_type() {
-        return id_type;
-    }
-
-    public void setId_type(long id_type) {
-        this.id_type = id_type;
-    }
-
-    public int getInt_type() {
-        return int_type;
-    }
-
-    public void setInt_type(int int_type) {
-        this.int_type = int_type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }
