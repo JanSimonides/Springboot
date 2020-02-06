@@ -42,7 +42,7 @@ public class Property implements Serializable {
     private Type propertyType;
 
 
-  /*  @Override
+    @Override
     public String toString() {
         return
                 propertyId + " " +
@@ -53,6 +53,6 @@ public class Property implements Serializable {
                         propertyInDate + " " +
                         propertyOutDate + " " +
                         propertyState ;
-    }*/
+    }
 
 }

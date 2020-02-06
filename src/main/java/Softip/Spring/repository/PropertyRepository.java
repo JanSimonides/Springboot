@@ -13,4 +13,6 @@ public interface PropertyRepository extends JpaRepository<Property,Long> {
 
     List<Property> findByPropertyStateCharState(char state);
 
+
+
 }

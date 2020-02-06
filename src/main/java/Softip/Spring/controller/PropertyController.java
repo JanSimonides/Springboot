@@ -105,8 +105,9 @@ public class PropertyController {
     }
 
     @GetMapping("/ok")
-    public List<Property>  findOk() {
-        return propertyService.findAllProperties();
+    public  List<Property>  findOk() {
+        return propertyService.vsetko();
+
     }
 
   /*  @GetMapping("/moved")

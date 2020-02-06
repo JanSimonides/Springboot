@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface StateRepository extends JpaRepository<State,Long> {
 
     State findByCharState(Character c);
+
 }

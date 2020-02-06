@@ -28,4 +28,5 @@ public class StateService {
     public State findState(Character c){
        return  stateRepository.findByCharState(c);
     }
+
 }

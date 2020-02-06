@@ -17,4 +17,5 @@ public class TypeDTO {
     private String description;
     private Set<PropertyDTO> properties;
 
+
 }

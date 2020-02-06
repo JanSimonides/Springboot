@@ -3,6 +3,8 @@ package Softip.Spring.service;
 
 import Softip.Spring.mapper.TypeMapper;
 import Softip.Spring.model.dto.TypeDTO;
+import Softip.Spring.model.entity.Property;
+import Softip.Spring.model.entity.State;
 import Softip.Spring.model.entity.Type;
 import Softip.Spring.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ public class TypeService {
                 .map(type -> typeMapper.toDto(type))
                 .collect(Collectors.toList());
     };
+
 
     public Type findType(int x){
         return  typeRepositery.findByIntType(x);
