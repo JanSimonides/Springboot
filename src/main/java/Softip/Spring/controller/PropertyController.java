@@ -6,18 +6,23 @@ import Softip.Spring.YamlCfg;
 import Softip.Spring.mapper.PropertyMapper;
 import Softip.Spring.mapper.StateMapper;
 import Softip.Spring.model.dto.PropertyDTO;
+import Softip.Spring.model.entity.Input;
 import Softip.Spring.model.entity.Property;
 import Softip.Spring.model.entity.State;
 import Softip.Spring.model.entity.Type;
+import Softip.Spring.repository.InputRepository;
 import Softip.Spring.repository.PropertyRepository;
 import Softip.Spring.repository.StateRepository;
 import Softip.Spring.repository.TypeRepository;
 import Softip.Spring.service.PropertyService;
 import Softip.Spring.service.StateService;
 import Softip.Spring.service.TypeService;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -26,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class PropertyController {
@@ -63,6 +69,9 @@ public class PropertyController {
 
     @Autowired
     TypeService typeService;
+
+    @Autowired
+    InputRepository inputRepository;
 
     @Autowired
     private YamlCfg yamlCfg;
@@ -104,24 +113,25 @@ public class PropertyController {
         return propertyService.findAll() ;
     }
 
-    @GetMapping("/ok")
-    public  List<Property>  findOk() {
+    /*@GetMapping("/ok")
+    @Transactional
+    public  List<Property> findOk() {
         return propertyService.vsetko();
-
     }
 
-  /*  @GetMapping("/moved")
-    public @ResponseBody List<Property> findMoved(){
+    @GetMapping("/moved")
+    public  List<Property> findMoved(){
 
-        //return propertyRepositery.findByPropertyStateCharStateOrderByPropertyInDateAsc('V');
-    }*/
+        return propertyService.pokus();
+    }
 
-    /*@GetMapping("/missing")
-    public@ResponseBody List<Property> findMissing(){
-        return propertyRepositery.findByPropertyStateOrderByPropertyPriceAsc('M');
-    }*/
-    /*
-    @GetMapping("/removed")
+    @GetMapping("/missing")
+    @Transactional
+    public @ResponseBody List<Property> findMissing(){
+        return propertyRepository.findAll();
+    }
+
+   /* @GetMapping("/removed")
     public @ResponseBody List<Property>findRemoved(){
             return propertyRepositery.findByPropertyOutDateNotNull();
         }
@@ -131,15 +141,42 @@ public class PropertyController {
 
         ArrayList<String> inputs = null;
         try {
-            inputs = CheckInputs.checkInputs(appArgs.getSourceArgs(),"used.txt", yamlCfg.getDirectory());
+            inputs = CheckInputs.checkInputs(appArgs.getSourceArgs(), yamlCfg.getDirectory());
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        int c=0;
+        ArrayList<String> toRemove = new ArrayList<String>();
+
+        if(Objects.requireNonNull(inputs).size() > 0)
+            for (String s : inputs) {
+                System.out.println(c++);
+                Input input = new Input(s);
+                try {
+                    inputRepository.save(input);
+                } catch (Exception e) {
+                    logger.warn("Subor: " + s + " sa uz nachadza v databaze");
+                    System.out.println("Subor: " + s + " sa uz nachadza v databaze");
+                    toRemove.add(s);
+                }
+            }
+
+
+
+        System.out.println("Inputs: " +inputs);
+        System.out.println("ToRemove: "+ toRemove);
+
+        for (String s : toRemove){
+            inputs.remove(s);
+        }
+
         Property propertyToSave;
         System.out.println("ARG: "+inputs);
         String result = "<html>";
         ArrayList<PropertyDTO> properties = null;
         int i;
+        if (inputs.size() > 0)
         for (i = 0; i < inputs.size(); i++) {
             properties = ReadCsv.readProperty(inputs.get(i),yamlCfg.getDirectory());
             for (PropertyDTO p : properties) {

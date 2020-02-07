@@ -12,6 +12,7 @@ import java.util.List;
 public interface PropertyRepository extends JpaRepository<Property,Long> {
 
     List<Property> findByPropertyStateCharState(char state);
+    Property findByPropertyId(int x);
 
 
 

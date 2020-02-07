@@ -1,13 +1,17 @@
 package Softip.Spring.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -26,6 +30,7 @@ public class State  implements Serializable {
     @Column(name = "description")
     private String description;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyState", cascade = CascadeType.ALL)
+
     private Set<Property> stateProperties;
 
     public State(Character ID_state, String description) {

@@ -26,6 +26,7 @@ public class Application {
 	public static void main(String[] args) {
 		String path = System.getProperty("user.dir");
 		String separator = File.separator;
+		//PropertyConfigurator.configure(path+separator+"src"+separator+"main"+separator+"resources"+separator+"log4j.properties");
 		PropertyConfigurator.configure(path+separator+"classes"+separator+"log4j.properties");
 
 		String[] input = String.join( " ", args ).split("[, ]");

@@ -1,14 +1,14 @@
 package Softip.Spring.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+
+import static lombok.AccessLevel.NONE;
 
 
 @Entity
@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude ={ "propertyType","propertyState"})
+@EqualsAndHashCode(exclude = { "propertyType","propertyState"})
 public class Property implements Serializable {
     private static  final long serialVersionUID = 1L;
 
@@ -32,27 +34,11 @@ public class Property implements Serializable {
     private LocalDate propertyInDate;
     @Column(name = "property_out_date")
     private LocalDate propertyOutDate;
-
     @ManyToOne
     @JoinColumn(name="property_state", nullable = false)
     private State propertyState;
-
     @ManyToOne
     @JoinColumn(name="property_type", nullable = false)
     private Type propertyType;
-
-
-    @Override
-    public String toString() {
-        return
-                propertyId + " " +
-                        propertyName +  " " +
-                        propertyRoom +  " " +
-                        propertyType + " " +
-                        propertyPrice + " " +
-                        propertyInDate + " " +
-                        propertyOutDate + " " +
-                        propertyState ;
-    }
 
 }

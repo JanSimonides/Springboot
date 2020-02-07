@@ -1,5 +1,6 @@
 package Softip.Spring.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,18 +11,19 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PropertyDTO {
 
     private int propertyId;
     private  String propertyName;
     private  String propertyRoom;
+    @JsonIgnore
     private int intForType;
     private TypeDTO propertyTypeDTO;
     private float propertyPrice;
     private LocalDate propertyInDate;
     private LocalDate propertyOutDate;
     private StateDTO propertyStateDTO;
+    @JsonIgnore
     private Character character;
 
     public PropertyDTO(String[] parameters)  {
