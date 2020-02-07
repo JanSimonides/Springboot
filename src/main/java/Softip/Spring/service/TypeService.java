@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 @Service
 public class TypeService {
     @Autowired
-    TypeRepository typeRepositery;
+    TypeRepository typeRepository;
 
     @Autowired
     TypeMapper typeMapper;
 
 
     List<TypeDTO> findAll (){
-        List<Type> types = typeRepositery.findAll();
+        List<Type> types = typeRepository.findAll();
         return  types.stream()
                 .map(type -> typeMapper.toDto(type))
                 .collect(Collectors.toList());
@@ -32,7 +32,18 @@ public class TypeService {
 
 
     public Type findType(int x){
-        return  typeRepositery.findByIntType(x);
+        return  typeRepository.findByIntType(x);
     }
+
+    public void initType (){
+       Type type0 = new Type(0,"IMA");
+       Type type1 = new Type(1,"DIM");
+       try {
+          typeRepository.save(type0);
+          typeRepository.save(type1);
+       }catch (Exception ignored){
+       }
+    }
+
 
 }

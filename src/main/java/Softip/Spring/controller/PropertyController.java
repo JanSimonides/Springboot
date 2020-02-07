@@ -1,37 +1,24 @@
 package Softip.Spring.controller;
 
-import Softip.Spring.CheckInputs;
-import Softip.Spring.ReadCsv;
 import Softip.Spring.YamlCfg;
 import Softip.Spring.mapper.PropertyMapper;
 import Softip.Spring.mapper.StateMapper;
 import Softip.Spring.model.dto.PropertyDTO;
-import Softip.Spring.model.entity.Input;
-import Softip.Spring.model.entity.Property;
 import Softip.Spring.model.entity.State;
 import Softip.Spring.model.entity.Type;
-import Softip.Spring.repository.InputRepository;
 import Softip.Spring.repository.PropertyRepository;
 import Softip.Spring.repository.StateRepository;
 import Softip.Spring.repository.TypeRepository;
 import Softip.Spring.service.PropertyService;
-import Softip.Spring.service.StateService;
-import Softip.Spring.service.TypeService;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 public class PropertyController {
@@ -43,62 +30,12 @@ public class PropertyController {
     PropertyService propertyService;
 
     @Autowired
-    private
-    StateService stateService;
-
-    @Autowired
-    private
-    PropertyRepository propertyRepository;
-
-    @Autowired
-    private
-    TypeRepository typeRepository;
-
-    @Autowired
-    private
-    StateRepository stateRepository;
-
-    @Autowired
     ApplicationArguments appArgs;
-
-    @Autowired
-    PropertyMapper propertyMapper;
-
-    @Autowired
-    StateMapper stateMapper;
-
-    @Autowired
-    TypeService typeService;
-
-    @Autowired
-    InputRepository inputRepository;
 
     @Autowired
     private YamlCfg yamlCfg;
 
-    String home = "<a href=\"/\">\n" +
-            "      <H1>Home</H1>\n" +
-            "    </a>";
     @PostConstruct
-    public  void init (){
-        Type type0 = new Type(0,"IMA");
-        Type type1 = new Type(1,"DIM");
-        State state3= new State('V',"Moved");
-        State state2 = new State('M',"Missing");
-        State state1 = new State('O',"Ok");
-
-        try {
-            stateRepository.save(state1);
-            stateRepository.save(state2);
-            stateRepository.save(state3);
-            typeRepository.save(type0);
-            typeRepository.save(type1);
-        }catch (Exception e){
-
-        }
-
-
-    }
 
     @GetMapping("/")
     public  ModelAndView printDir () {
@@ -113,89 +50,28 @@ public class PropertyController {
         return propertyService.findAll() ;
     }
 
-    /*@GetMapping("/ok")
-    @Transactional
-    public  List<Property> findOk() {
-        return propertyService.vsetko();
+    @GetMapping("/ok")
+    public  List<PropertyDTO> findOk() {
+        return propertyService.findByChar('O');
     }
 
     @GetMapping("/moved")
-    public  List<Property> findMoved(){
-
-        return propertyService.pokus();
+    public  List<PropertyDTO> findMoved() {
+        return propertyService.findByChar('V');
     }
 
     @GetMapping("/missing")
-    @Transactional
-    public @ResponseBody List<Property> findMissing(){
-        return propertyRepository.findAll();
+    public  List<PropertyDTO> findMissing() {
+        return propertyService.findByChar('M');
     }
 
-   /* @GetMapping("/removed")
-    public @ResponseBody List<Property>findRemoved(){
-            return propertyRepositery.findByPropertyOutDateNotNull();
-        }
-*/
+   @GetMapping("/removed")
+    public @ResponseBody List<PropertyDTO>findRemoved() {
+       return propertyService.findOutDate();
+   }
+
     @GetMapping("/add")
-    public String add () throws FileNotFoundException {
-
-        ArrayList<String> inputs = null;
-        try {
-            inputs = CheckInputs.checkInputs(appArgs.getSourceArgs(), yamlCfg.getDirectory());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int c=0;
-        ArrayList<String> toRemove = new ArrayList<String>();
-
-        if(Objects.requireNonNull(inputs).size() > 0)
-            for (String s : inputs) {
-                System.out.println(c++);
-                Input input = new Input(s);
-                try {
-                    inputRepository.save(input);
-                } catch (Exception e) {
-                    logger.warn("Subor: " + s + " sa uz nachadza v databaze");
-                    System.out.println("Subor: " + s + " sa uz nachadza v databaze");
-                    toRemove.add(s);
-                }
-            }
-
-
-
-        System.out.println("Inputs: " +inputs);
-        System.out.println("ToRemove: "+ toRemove);
-
-        for (String s : toRemove){
-            inputs.remove(s);
-        }
-
-        Property propertyToSave;
-        System.out.println("ARG: "+inputs);
-        String result = "<html>";
-        ArrayList<PropertyDTO> properties = null;
-        int i;
-        if (inputs.size() > 0)
-        for (i = 0; i < inputs.size(); i++) {
-            properties = ReadCsv.readProperty(inputs.get(i),yamlCfg.getDirectory());
-            for (PropertyDTO p : properties) {
-                try {
-                    propertyToSave = propertyMapper.toEntity(p);
-                    //nastavenie statu
-                    propertyToSave.setPropertyState(stateService.findState(p.getCharacter()));
-                    //nastavenie typu
-                    propertyToSave.setPropertyType(typeService.findType(p.getIntForType()));
-                    propertyRepository.save(propertyToSave);
-                } catch (Exception e) {
-                    System.out.println("Do databazy neboli pridane: " + propertyMapper.toEntity(p));
-                    logger.warn("Do databazy nebol pridany objekt: " + propertyMapper.toEntity(p).toString() + " zo subora: " + inputs.get(i));
-                }
-            }
-        }
-        result += " Pridane do databazy ";
-        result += home;
-        return result + "</html>";
+    public String add () throws FileNotFoundException { return  propertyService.addToDB();
     }
 
 }
