@@ -11,6 +11,7 @@ public interface PropertyRepository extends JpaRepository<Property,Long> {
 
     List<Property> findByPropertyStateCharState(char state);
     List<Property> findByPropertyOutDateNotNull();
+    Property findByPropertyId(int x);
 
 
 }

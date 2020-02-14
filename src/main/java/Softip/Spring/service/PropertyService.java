@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +61,18 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    public List<Property> findProperty(){
+        List<Property> properties  = propertyRepository.findAll();
+
+        List<PropertyDTO> DTOs =  properties.stream()
+                .map(p -> propertyMapper.toDto(p))
+                .collect(Collectors.toList());
+        return DTOs.stream()
+                .map(d -> propertyMapper.toEntity(d))
+                .collect(Collectors.toList());
+
+    }
+
     public List<PropertyDTO> findByChar(char x){
         List<Property> properties  = propertyRepository.findByPropertyStateCharState(x);
 
@@ -76,6 +89,11 @@ public class PropertyService {
                 .collect(Collectors.toList());
     }
 
+    public PropertyDTO findById(int x){
+        Property property  = propertyRepository.findByPropertyId(x);
+
+        return propertyMapper.toDto(property);
+    }
 
     public String addToDB () throws FileNotFoundException {
         logger.info("Vkladanie udajov do databazy\n");

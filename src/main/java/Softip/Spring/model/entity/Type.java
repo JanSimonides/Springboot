@@ -1,5 +1,6 @@
 package Softip.Spring.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +31,7 @@ public class Type  implements Serializable {
     @Column(name = "description")
     private String description;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "propertyType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Property> typeProperties;
 
     public Type(int int_type, String description) {

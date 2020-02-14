@@ -4,6 +4,7 @@ import Softip.Spring.YamlCfg;
 import Softip.Spring.mapper.PropertyMapper;
 import Softip.Spring.mapper.StateMapper;
 import Softip.Spring.model.dto.PropertyDTO;
+import Softip.Spring.model.entity.Property;
 import Softip.Spring.model.entity.State;
 import Softip.Spring.model.entity.Type;
 import Softip.Spring.repository.PropertyRepository;
@@ -13,6 +14,7 @@ import Softip.Spring.service.PropertyService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -46,9 +48,12 @@ public class PropertyController {
 
 
     @GetMapping(path="/all")
-    public List<PropertyDTO> findall() {
-        return propertyService.findAll() ;
+    public List<Property> findall() {
+        return propertyService.findProperty() ;
     }
+
+    @GetMapping(path ="/model" )
+    public List<Property> findProperty(){return propertyService.findProperty();}
 
     @GetMapping("/ok")
     public  List<PropertyDTO> findOk() {
@@ -65,7 +70,10 @@ public class PropertyController {
         return propertyService.findByChar('M');
     }
 
-   @GetMapping("/removed")
+    @GetMapping("/id")
+    public PropertyDTO findById(){return propertyService.findById(2);}
+
+    @GetMapping("/removed")
     public @ResponseBody List<PropertyDTO>findRemoved() {
        return propertyService.findOutDate();
    }
@@ -73,5 +81,6 @@ public class PropertyController {
     @GetMapping("/add")
     public String add () throws FileNotFoundException { return  propertyService.addToDB();
     }
+
 
 }
