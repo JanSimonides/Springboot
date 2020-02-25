@@ -56,30 +56,36 @@ public class PropertyController {
     public List<Property> findProperty(){return propertyService.findProperty();}
 
     @GetMapping("/ok")
-    public  List<PropertyDTO> findOk() {
+    public  List<Property> findOk() {
         return propertyService.findByChar('O');
     }
 
     @GetMapping("/moved")
-    public  List<PropertyDTO> findMoved() {
+    public  List<Property> findMoved() {
         return propertyService.findByChar('V');
     }
 
     @GetMapping("/missing")
-    public  List<PropertyDTO> findMissing() {
+    public  List<Property> findMissing() {
         return propertyService.findByChar('M');
     }
 
-    @GetMapping("/id")
-    public PropertyDTO findById(){return propertyService.findById(2);}
+
 
     @GetMapping("/removed")
-    public @ResponseBody List<PropertyDTO>findRemoved() {
+    public  List<Property>findRemoved() {
        return propertyService.findOutDate();
    }
 
     @GetMapping("/add")
     public String add () throws FileNotFoundException { return  propertyService.addToDB();
+    }
+
+    @GetMapping(value="/id/{id}")
+    public Property findById(@PathVariable  int id){return propertyService.findById(id);}
+    @GetMapping (value = "/delete/{id}")
+    public void deleteProperty (@PathVariable  int id){
+        propertyService.deleteProperty(id);
     }
 
 

@@ -40,5 +40,4 @@ public class Property implements Serializable {
     @ManyToOne
     @JoinColumn(name="property_type", nullable = false)
     private Type propertyType;
-
 }

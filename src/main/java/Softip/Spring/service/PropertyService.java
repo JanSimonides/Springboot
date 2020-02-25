@@ -67,32 +67,45 @@ public class PropertyService {
         List<PropertyDTO> DTOs =  properties.stream()
                 .map(p -> propertyMapper.toDto(p))
                 .collect(Collectors.toList());
+
         return DTOs.stream()
                 .map(d -> propertyMapper.toEntity(d))
                 .collect(Collectors.toList());
 
     }
 
-    public List<PropertyDTO> findByChar(char x){
+    public List<Property> findByChar(char x){
         List<Property> properties  = propertyRepository.findByPropertyStateCharState(x);
 
-        return  properties.stream()
+        List<PropertyDTO> DTOs =  properties.stream()
                 .map(p -> propertyMapper.toDto(p))
                 .collect(Collectors.toList());
-    }
 
-    public List<PropertyDTO> findOutDate(){
+        return DTOs.stream()
+                .map(d -> propertyMapper.toEntity(d))
+                .collect(Collectors.toList());
+}
+
+    public List<Property> findOutDate(){
         List<Property> properties  = propertyRepository.findByPropertyOutDateNotNull();
 
-        return  properties.stream()
+        List<PropertyDTO> DTOs =  properties.stream()
                 .map(p -> propertyMapper.toDto(p))
+                .collect(Collectors.toList());
+
+        return DTOs.stream()
+                .map(d -> propertyMapper.toEntity(d))
                 .collect(Collectors.toList());
     }
 
-    public PropertyDTO findById(int x){
+    public Property findById(int x){
         Property property  = propertyRepository.findByPropertyId(x);
+        PropertyDTO propertyDTO = propertyMapper.toDto(property);
+        return propertyMapper.toEntity(propertyDTO);
+    }
 
-        return propertyMapper.toDto(property);
+    public void deleteProperty (int id){
+        propertyRepository.delete(propertyRepository.findByPropertyId(id));
     }
 
     public String addToDB () throws FileNotFoundException {
@@ -146,7 +159,7 @@ public class PropertyService {
                         propertyRepository.save(propertyToSave);
                     } catch (Exception e) {
                         System.out.println("Do databazy neboli pridane: " + propertyMapper.toEntity(p).toString());
-                        logger.warn("Do databazy nebol pridany objekt: " + propertyMapper.toEntity(p).toString() + " zo subora: " + inputs.get(i));
+                        logger.warn("Do databazy nebol pridany objekt: " + propertyMapper.toEntity(p).getPropertyName() + " zo subora: " + inputs.get(i));
                     }
                 }
             }
