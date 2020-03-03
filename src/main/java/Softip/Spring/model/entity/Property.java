@@ -22,6 +22,7 @@ public class Property implements Serializable {
     private static  final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue
     @Column(name = "property_id", unique = true, nullable = false)
     private int propertyId;
     @Column(name = "property_name", unique = true, nullable = false)

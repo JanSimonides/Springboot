@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class PropertyController {
@@ -83,10 +84,15 @@ public class PropertyController {
 
     @GetMapping(value="/id/{id}")
     public Property findById(@PathVariable  int id){return propertyService.findById(id);}
-    @GetMapping (value = "/delete/{id}")
+    @DeleteMapping (value = "/delete/{id}")
     public void deleteProperty (@PathVariable  int id){
         propertyService.deleteProperty(id);
     }
 
+    @PostMapping("/saveProperty")
+    public void create(@RequestBody Map<String, String> body){
+        propertyService.add(body.get("propertyId"), body.get("propertyName"),body.get("propertyRoom"),body.get("propertyPrice"),body.get("propertyInDate"),
+                body.get("propertyOutDate"),body.get("charState"),body.get("intType"));
+    }
 
 }

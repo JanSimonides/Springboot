@@ -9,8 +9,11 @@ import Softip.Spring.mapper.PropertyMapper;
 import Softip.Spring.model.dto.PropertyDTO;
 import Softip.Spring.model.entity.Input;
 import Softip.Spring.model.entity.Property;
+import Softip.Spring.model.entity.State;
+import Softip.Spring.model.entity.Type;
 import Softip.Spring.repository.InputRepository;
 import Softip.Spring.repository.PropertyRepository;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +22,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -53,55 +58,21 @@ public class PropertyService {
             "    </a>";
 
 
-    public List<PropertyDTO> findAll(){
-        List<Property> properties  = propertyRepository.findAll();
-
-        return  properties.stream()
-                .map(p -> propertyMapper.toDto(p))
-                .collect(Collectors.toList());
-    }
-
     public List<Property> findProperty(){
-        List<Property> properties  = propertyRepository.findAll();
-
-        List<PropertyDTO> DTOs =  properties.stream()
-                .map(p -> propertyMapper.toDto(p))
-                .collect(Collectors.toList());
-
-        return DTOs.stream()
-                .map(d -> propertyMapper.toEntity(d))
-                .collect(Collectors.toList());
-
+        return propertyRepository.findAll();
     }
 
     public List<Property> findByChar(char x){
-        List<Property> properties  = propertyRepository.findByPropertyStateCharState(x);
-
-        List<PropertyDTO> DTOs =  properties.stream()
-                .map(p -> propertyMapper.toDto(p))
-                .collect(Collectors.toList());
-
-        return DTOs.stream()
-                .map(d -> propertyMapper.toEntity(d))
-                .collect(Collectors.toList());
+        return propertyRepository.findByPropertyStateCharState(x);
 }
 
     public List<Property> findOutDate(){
-        List<Property> properties  = propertyRepository.findByPropertyOutDateNotNull();
-
-        List<PropertyDTO> DTOs =  properties.stream()
-                .map(p -> propertyMapper.toDto(p))
-                .collect(Collectors.toList());
-
-        return DTOs.stream()
-                .map(d -> propertyMapper.toEntity(d))
-                .collect(Collectors.toList());
+        return propertyRepository.findByPropertyOutDateNotNull();
     }
 
     public Property findById(int x){
-        Property property  = propertyRepository.findByPropertyId(x);
-        PropertyDTO propertyDTO = propertyMapper.toDto(property);
-        return propertyMapper.toEntity(propertyDTO);
+        return  propertyRepository.findByPropertyId(x);
+
     }
 
     public void deleteProperty (int id){
@@ -117,12 +88,10 @@ public class PropertyService {
             e.printStackTrace();
         }
 
-        int c=0;
         ArrayList<String> toRemove = new ArrayList<String>();
 
         if(Objects.requireNonNull(inputs).size() > 0)
             for (String s : inputs) {
-                System.out.println(c++);
                 Input input = new Input(s);
                 try {
                     inputRepository.save(input);
@@ -168,4 +137,17 @@ public class PropertyService {
         return result + "</html>";
     }
 
+    public void add(String propertyId, String propertyName, String propertyRoom, String propertyPrice, String propertyInDate, String propertyOutDate, String propertyState, String propertyType) {
+        int pId = Integer.parseInt(propertyId);
+        float pPrice = Float.parseFloat(propertyPrice);
+        LocalDate pInDate =  LocalDate.parse(propertyInDate.substring(0, 4) + "-" + propertyInDate.substring(4, 6) + "-" + propertyInDate.substring(6, 8));
+        LocalDate pOutDate = null;
+
+        if (!propertyOutDate.isEmpty()) {
+            pOutDate = LocalDate.parse(propertyOutDate.substring(0, 4) + "-" + propertyOutDate.substring(4, 6) + "-" + propertyOutDate.substring(6, 8));
+        }
+        Property property = new Property(pId,propertyName,propertyRoom,pPrice,pInDate,pOutDate,stateService.findState(propertyState.charAt(0)),typeService.findType(Integer.parseInt(propertyType)));
+
+        propertyRepository.save(property);
+    }
 }

@@ -5,9 +5,13 @@ import Softip.Spring.model.dto.StateDTO;
 import Softip.Spring.model.entity.State;
 import Softip.Spring.model.entity.Type;
 import Softip.Spring.repository.StateRepository;
+import org.hibernate.dialect.PostgreSQL9Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLDataException;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +23,9 @@ public class StateService {
     @Autowired
     StateMapper stateMapper;
 
-    List<StateDTO> findAll (){
+    public List<State> findAllStates(){ return stateRepository.findAll(); }
+
+    public List<StateDTO> findAll(){
         List<State> states = stateRepository.findAll();
         return  states.stream()
                 .map(state -> stateMapper.toDto(state))
@@ -42,5 +48,13 @@ public class StateService {
        }
     }
 
+    public void add(Character charState, String description) {
+        State state = new State(charState, description);
+        try {
+            stateRepository.save(state);
+            } catch (Exception ignored) {
+        }
+
+    }
 
 }
