@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -66,12 +67,11 @@ public class PropertyController {
         return propertyService.findByChar('V');
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/missing")
     public  List<Property> findMissing() {
         return propertyService.findByChar('M');
     }
-
-
 
     @GetMapping("/removed")
     public  List<Property>findRemoved() {
@@ -84,6 +84,8 @@ public class PropertyController {
 
     @GetMapping(value="/id/{id}")
     public Property findById(@PathVariable  int id){return propertyService.findById(id);}
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping (value = "/delete/{id}")
     public void deleteProperty (@PathVariable  int id){
         propertyService.deleteProperty(id);

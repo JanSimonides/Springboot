@@ -27,11 +27,8 @@ public class TypeService {
     TypeMapper typeMapper;
 
 
-    List<TypeDTO> findAll() {
-        List<Type> types = typeRepository.findAll();
-        return types.stream()
-                .map(type -> typeMapper.toDto(type))
-                .collect(Collectors.toList());
+    public List<Type> findAll() {
+        return typeRepository.findAll();
     }
 
     public Type findType(int x) {
