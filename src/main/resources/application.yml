@@ -13,7 +13,7 @@ spring:
     open-in-view: false
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 server:
   port: 8080
 directory : C:\Users\jansi\IdeaProjects\testSpringboot\src\main\resources\Files\
