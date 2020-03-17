@@ -1,21 +1,13 @@
 package Softip.Spring.controller;
 
 import Softip.Spring.YamlCfg;
-import Softip.Spring.mapper.PropertyMapper;
-import Softip.Spring.mapper.StateMapper;
-import Softip.Spring.model.dto.PropertyDTO;
 import Softip.Spring.model.entity.Property;
-import Softip.Spring.model.entity.State;
-import Softip.Spring.model.entity.Type;
-import Softip.Spring.repository.PropertyRepository;
-import Softip.Spring.repository.StateRepository;
-import Softip.Spring.repository.TypeRepository;
 import Softip.Spring.service.PropertyService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
+@EnableScheduling
 @RestController
 public class PropertyController {
 
@@ -38,9 +31,7 @@ public class PropertyController {
 
     @Autowired
     private YamlCfg yamlCfg;
-
     @PostConstruct
-
     @GetMapping("/")
     public  ModelAndView printDir () {
         ModelAndView model = new ModelAndView("directory.html");
@@ -67,7 +58,7 @@ public class PropertyController {
         return propertyService.findByChar('V');
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    //@PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/missing")
     public  List<Property> findMissing() {
         return propertyService.findByChar('M');
@@ -78,14 +69,15 @@ public class PropertyController {
        return propertyService.findOutDate();
    }
 
-    @GetMapping("/add")
+    //@GetMapping("/add")
+    @Scheduled(fixedRateString = "${seconds}")
     public String add () throws FileNotFoundException { return  propertyService.addToDB();
     }
 
     @GetMapping(value="/id/{id}")
     public Property findById(@PathVariable  int id){return propertyService.findById(id);}
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    //@PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping (value = "/delete/{id}")
     public void deleteProperty (@PathVariable  int id){
         propertyService.deleteProperty(id);

@@ -23,8 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,58 +83,78 @@ public class PropertyService {
     }
 
     public String addToDB () throws FileNotFoundException {
-        logger.info("Vkladanie udajov do databazy\n");
-        ArrayList<String> inputs = null;
-        try {
-            inputs = CheckInputs.checkInputs(appArgs.getSourceArgs(), yamlCfg.getDirectory());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ArrayList<String> toRemove = new ArrayList<String>();
-
-        if(Objects.requireNonNull(inputs).size() > 0)
-            for (String s : inputs) {
-                Input input = new Input(s);
-                try {
-                    inputRepository.save(input);
-                } catch (Exception e) {
-                    logger.warn("Subor: " + s + " sa uz nachadza v databaze");
-                    System.out.println("Subor: " + s + " sa uz nachadza v databaze");
-                    toRemove.add(s);
-                }
-            }
-
-        System.out.println("Inputs: " +inputs);
-        System.out.println("ToRemove: "+ toRemove);
-
-        for (String s : toRemove){
-            inputs.remove(s);
-        }
+        File sourceFolder = new File(yamlCfg.getDirectoryNew());
+        String pathToDest = yamlCfg.getDirectoryUsed();
+        String pathToErrors = yamlCfg.getDirectoryError();
+        File[] inputs = sourceFolder.listFiles();
 
         Property propertyToSave;
-        System.out.println("ARG: "+inputs);
         String result = "<html>";
         Property propertyLog;
         ArrayList<PropertyDTO> properties = null;
-        int i;
-        if (inputs.size() > 0)
-            for (i = 0; i < inputs.size(); i++) {
-                properties = ReadCsv.readProperty(inputs.get(i),yamlCfg.getDirectory());
-                for (PropertyDTO p : properties) {
-                    try {
-                        propertyToSave = propertyMapper.toEntity(p);
-                        //nastavenie statu
-                        propertyToSave.setPropertyState(stateService.findState(p.getCharacter()));
-                        //nastavenie typu
-                        propertyToSave.setPropertyType(typeService.findType(p.getIntForType()));
-                        propertyRepository.save(propertyToSave);
-                    } catch (Exception e) {
-                        System.out.println("Do databazy neboli pridane: " + propertyMapper.toEntity(p).toString());
-                        logger.warn("Do databazy nebol pridany objekt: " + propertyMapper.toEntity(p).getPropertyName() + " zo subora: " + inputs.get(i));
+        Boolean wrongData = false;
+        int i,err=0;
+        if (inputs.length > 0) {
+            for (i = 0; i < inputs.length; i++) {
+                if (!inputRepository.existsByFileName(inputs[i].getName())) {
+                    Input input = new Input(inputs[i].getName());
+                    inputRepository.save(input);
+                    properties = ReadCsv.readProperty(inputs[i]);
+                    for (PropertyDTO p : properties) {
+                        try {
+                            propertyToSave = propertyMapper.toEntity(p);
+                            //nastavenie statu
+                            propertyToSave.setPropertyState(stateService.findState(p.getCharacter()));
+                            //nastavenie typu
+                            propertyToSave.setPropertyType(typeService.findType(p.getIntForType()));
+                            propertyRepository.save(propertyToSave);
+                        } catch (Exception e) {
+                            wrongData = true;
+                            System.out.println("Do databazy neboli pridane: " + propertyMapper.toEntity(p).toString());
+                            logger.warn("Do databazy nebol pridany objekt: " + propertyMapper.toEntity(p).getPropertyName() + " zo subora: " + inputs[i].getName());
+                        }
+                    }
+                    if (wrongData){
+                        File duplicateFolder = new File(pathToErrors + inputs[i].getName());
+                        logger.warn("Inventura " + inputs[i].getName()+ " obsahuje chybne udaje");
+                        err++;
+                        try {
+                            Files.move(inputs[i].toPath(),duplicateFolder.toPath(),StandardCopyOption.REPLACE_EXISTING);
+                            inputs[i].delete();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        try {
+                            File destinationFolder = new File(pathToDest + inputs[i].getName());
+                            Files.move(inputs[i].toPath(), destinationFolder.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            logger.warn("Inventura " + inputs[i].getName()+ " zaevidovana uspesne");
+                            inputs[i].delete();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+                else {
+                    File errorsFolder = new File(pathToErrors + inputs[i].getName());
+                    logger.warn("Inventura " + inputs[i].getName()+ "sa uz nachadza v databaze");
+                    err++;
+                    try {
+                        Files.move(inputs[i].toPath(),errorsFolder.toPath(),StandardCopyOption.REPLACE_EXISTING);
+                        inputs[i].delete();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                wrongData = false;
             }
+        }
+        else{
+            logger.info("Priecinok je prazdny");
+        }
+        logger.info("Koniec kontroly");
+        logger.info("Evidovanie "+ inputs.length+" inventur do databazy. "+(inputs.length-err)+"  uspesne a "+err+"  neuspesne\n");
         result += " Pridane do databazy ";
         result += home;
         return result + "</html>";

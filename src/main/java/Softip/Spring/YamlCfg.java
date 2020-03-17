@@ -1,5 +1,7 @@
 package Softip.Spring;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -7,15 +9,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties
+@Getter
+@Setter
 public class YamlCfg {
 
     private String directory;
-
-    public String getDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(String directory) {
-        this.directory = directory;
-    }
+    private String directoryNew;
+    private String directoryUsed;
+    private String directoryError;
+    private  int seconds;
 }

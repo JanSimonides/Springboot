@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 public class ReadCsv {
     private final static Logger logger = Logger.getLogger(ReadCsv.class);
-    public static ArrayList<PropertyDTO> readProperty(String fileName, String directory) throws FileNotFoundException {
+    public static ArrayList<PropertyDTO> readProperty(File file) throws FileNotFoundException {
         ArrayList<PropertyDTO> properties = new ArrayList<>();
         BufferedReader br= null;
         String line;
@@ -24,35 +24,21 @@ public class ReadCsv {
             //System.out.println(fileName);
             //String path = System.getProperty("user.dir");
             String separator = File.separator;
-            //path = path.substring(0,path.length()-6);
+            try {
+                br = new BufferedReader(Files.newBufferedReader(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8));
+                //nacitanie prveho riadku s udajmi hlavicky
+                String firstLine = br.readLine();
+                line = br.readLine();
+                while (line != null) {
+                    parameters = line.split(";");
+                    PropertyDTO propertyDTO = new PropertyDTO(parameters);
+                    properties.add(propertyDTO);
 
-            Path pathToFile = Paths.get(directory +separator+fileName);
-            //System.out.println(pathToFile);
-            //kontrola vstupneho suboru
-            File file = new File(String.valueOf(pathToFile));
-            //System.out.println(!file.exists());
-            if (!file.exists()){
-                logger.error("Zadany subor neexistuje: "+fileName);
-            }
-            else {
-                try {
-                    br = new BufferedReader(Files.newBufferedReader(pathToFile, StandardCharsets.UTF_8));
-                    //nacitanie prveho riadku s udajmi hlavicky
-                    String firstLine = br.readLine();
                     line = br.readLine();
-                    while (line != null) {
-
-                        parameters = line.split(";");
-                        PropertyDTO propertyDTO = new PropertyDTO(parameters);
-
-                        properties.add(propertyDTO);
-
-                        line = br.readLine();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        return properties;
+            return properties;
     }
 }

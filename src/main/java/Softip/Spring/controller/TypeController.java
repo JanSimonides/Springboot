@@ -30,7 +30,7 @@ public class TypeController {
     public void create(@RequestBody Map<String, String> body){
         typeService.add(body.get("intType"), body.get("description"));
     }
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    //@PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping(path = "/type")
     public List<Type> findAll() { return typeService.findAll() ;
     }

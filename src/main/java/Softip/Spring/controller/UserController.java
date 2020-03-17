@@ -17,7 +17,7 @@ public class UserController {
         return "Hello World";
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    //@PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/helloAdmin")
     public String securedHello(){
         return "Secured Hello";
