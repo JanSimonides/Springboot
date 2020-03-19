@@ -7,7 +7,9 @@ import Softip.Spring.model.entity.Type;
 import Softip.Spring.repository.StateRepository;
 import org.hibernate.dialect.PostgreSQL9Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLDataException;
 import java.sql.SQLException;
@@ -50,9 +52,13 @@ public class StateService {
 
     public void add(Character charState, String description) {
         State state = new State(charState, description);
-        try {
+        if (stateRepository.existsByCharState(charState)){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "State already exists"
+            );
+        }
+        else {
             stateRepository.save(state);
-            } catch (Exception ignored) {
         }
 
     }

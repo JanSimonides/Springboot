@@ -18,9 +18,11 @@ import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.io.File;
@@ -165,12 +167,18 @@ public class PropertyService {
         float pPrice = Float.parseFloat(propertyPrice);
         LocalDate pInDate =  LocalDate.parse(propertyInDate.substring(0, 4) + "-" + propertyInDate.substring(4, 6) + "-" + propertyInDate.substring(6, 8));
         LocalDate pOutDate = null;
-
-        if (!propertyOutDate.isEmpty()) {
-            pOutDate = LocalDate.parse(propertyOutDate.substring(0, 4) + "-" + propertyOutDate.substring(4, 6) + "-" + propertyOutDate.substring(6, 8));
+        if (propertyRepository.existsByPropertyName(propertyName)){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Property already exists"
+            );
         }
-        Property property = new Property(pId,propertyName,propertyRoom,pPrice,pInDate,pOutDate,stateService.findState(propertyState.charAt(0)),typeService.findType(Integer.parseInt(propertyType)));
+        else {
+            if (!propertyOutDate.isEmpty()) {
+                pOutDate = LocalDate.parse(propertyOutDate.substring(0, 4) + "-" + propertyOutDate.substring(4, 6) + "-" + propertyOutDate.substring(6, 8));
+            }
+            Property property = new Property(pId,propertyName,propertyRoom,pPrice,pInDate,pOutDate,stateService.findState(propertyState.charAt(0)),typeService.findType(Integer.parseInt(propertyType)));
+            propertyRepository.save(property);
+        }
 
-        propertyRepository.save(property);
     }
 }

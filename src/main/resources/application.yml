@@ -20,5 +20,5 @@ directory : C:\Users\jansi\IdeaProjects\testSpringboot\src\main\resources\Files\
 directoryNew : C:\Users\jansi\IdeaProjects\testSpringboot\src\main\resources\Files\New\
 directoryUsed : C:\Users\jansi\IdeaProjects\testSpringboot\src\main\resources\Files\Used\
 directoryError : C:\Users\jansi\IdeaProjects\testSpringboot\src\main\resources\Files\Error\
-seconds : 60000
+seconds : 300000
 

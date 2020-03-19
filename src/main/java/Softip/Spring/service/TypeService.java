@@ -8,7 +8,9 @@ import Softip.Spring.model.entity.State;
 import Softip.Spring.model.entity.Type;
 import Softip.Spring.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
@@ -46,12 +48,17 @@ public class TypeService {
     }
 
     public void add(String number, String description) {
-            int x = Integer.parseInt(number);
-            Type type = new Type(x, description);
-            try {
-                typeRepository.save(type);
-            } catch (Exception ignored) {
+        int x = Integer.parseInt(number);
+        Type type = new Type(x, description);
 
-            }
+        if (typeRepository.existsByIntType(x)){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Type already exists"
+            );
+        }
+        else {
+            typeRepository.save(type);
+        }
+
     }
 }

@@ -10,4 +10,5 @@ public interface  TypeRepository extends JpaRepository<Type,Long> {
 
     Type findByIntType(int x);
 
+    boolean existsByIntType(int x);
 }

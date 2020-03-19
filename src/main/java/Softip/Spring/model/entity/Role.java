@@ -19,6 +19,10 @@ public class Role {
     @Column(name = "role_id")
     private int roleId;
 
-    @Column(name = "role")
+    @Column(name = "role", unique = true)
     private String role;
+
+    public Role(String role) {
+        this.role = role;
+    }
 }

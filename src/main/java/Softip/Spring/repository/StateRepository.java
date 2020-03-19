@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface StateRepository extends JpaRepository<State,Long> {
 
     State findByCharState(Character c);
+    Boolean existsByCharState (Character c);
 
 
 }

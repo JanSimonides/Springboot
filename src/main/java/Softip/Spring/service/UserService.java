@@ -1,28 +1,29 @@
 package Softip.Spring.service;
 
 import Softip.Spring.model.entity.CustomUserDetails;
+
 import Softip.Spring.model.entity.Role;
 import Softip.Spring.model.entity.User;
 import Softip.Spring.repository.UserRepository;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.SQLDataException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -41,19 +42,19 @@ public class UserService implements UserDetailsService {
 
         if (!optionalUser.isPresent()){
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "username not found"
+                    HttpStatus.NOT_FOUND, "Username not found"
             );
         }
         String pass = optionalUser.get().getPassword();
 
        if (password.equals(pass)){
            throw new ResponseStatusException(
-                   HttpStatus.OK, "username found"
+                   HttpStatus.OK, "Login was successful"
            );
         }
         else {
            throw new ResponseStatusException(
-                   HttpStatus.NOT_FOUND, "username not found"
+                   HttpStatus.NOT_FOUND, "Ssername or password is wrong"
            );
         }
 
@@ -65,7 +66,42 @@ public class UserService implements UserDetailsService {
         user.setEmail(body.get("email"));
         user.setUsername(body.get("username"));
         user.setPassword(body.get("password"));
+        user.setRoles(roleService.findRole("user"));
 
-        userRepository.save(user);
+
+        if (userRepository.existsByEmail(user.getEmail())){
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Email is using"
+            );
+        }
+        else if (userRepository.existsByUsername(user.getUsername())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "Username is using"
+            );
+        }
+        else {
+            userRepository.save(user);
+            throw new ResponseStatusException(
+                    HttpStatus.OK, "Registration was successful"
+            );
+        }
     }
+
+    public void createAdmin() {
+        User admin = new User();
+        admin.setActive(1);
+        admin.setEmail("admin@gmail.com");
+        admin.setUsername("admin");
+        admin.setPassword("admin1");
+        admin.setRoles(roleService.findRole("admin"));
+
+        try {
+            userRepository.save(admin);
+        }
+        catch (Exception ignored){
+        }
+
+    }
+
+
 }
