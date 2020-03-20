@@ -85,7 +85,7 @@ public class PropertyController {
 
     @PostMapping("/saveProperty")
     public void create(@RequestBody Map<String, String> body){
-        propertyService.add(body.get("propertyId"), body.get("propertyName"),body.get("propertyRoom"),body.get("propertyPrice"),body.get("propertyInDate"),
+        propertyService.add(body.get("propertyName"),body.get("propertyRoom"),body.get("propertyPrice"),body.get("propertyInDate"),
                 body.get("propertyOutDate"),body.get("charState"),body.get("intType"));
     }
 

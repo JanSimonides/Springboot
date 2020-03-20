@@ -162,8 +162,8 @@ public class PropertyService {
         return result + "</html>";
     }
 
-    public void add(String propertyId, String propertyName, String propertyRoom, String propertyPrice, String propertyInDate, String propertyOutDate, String propertyState, String propertyType) {
-        int pId = Integer.parseInt(propertyId);
+    public void add(String propertyName, String propertyRoom, String propertyPrice, String propertyInDate, String propertyOutDate, String propertyState, String propertyType) {
+        int pId = 0;
         float pPrice = Float.parseFloat(propertyPrice);
         LocalDate pInDate =  LocalDate.parse(propertyInDate.substring(0, 4) + "-" + propertyInDate.substring(4, 6) + "-" + propertyInDate.substring(6, 8));
         LocalDate pOutDate = null;
@@ -176,7 +176,7 @@ public class PropertyService {
             if (!propertyOutDate.isEmpty()) {
                 pOutDate = LocalDate.parse(propertyOutDate.substring(0, 4) + "-" + propertyOutDate.substring(4, 6) + "-" + propertyOutDate.substring(6, 8));
             }
-            Property property = new Property(pId,propertyName,propertyRoom,pPrice,pInDate,pOutDate,stateService.findState(propertyState.charAt(0)),typeService.findType(Integer.parseInt(propertyType)));
+            Property property = new Property(pId,propertyName,propertyRoom,pPrice,pInDate,pOutDate,stateService.findState(Character.toUpperCase(propertyState.charAt(0))),typeService.findType(Integer.parseInt(propertyType)));
             propertyRepository.save(property);
         }
 

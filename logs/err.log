@@ -112,3 +112,22 @@
 2020-03-19 16:59:14,668 - Koniec kontroly
 2020-03-19 16:59:14,668 - Evidovanie 4 inventur do databazy. 2  uspesne a 2  neuspesne
 
+2020-03-20 11:32:34,702 - Priecinok je prazdny
+2020-03-20 11:32:34,703 - Koniec kontroly
+2020-03-20 11:32:34,703 - Evidovanie 0 inventur do databazy. 0  uspesne a 0  neuspesne
+
+2020-03-20 13:18:00,112 - Do databazy nebol pridany objekt: Majetok31 zo subora: inventuraVzor1.csv
+2020-03-20 13:18:00,127 - Do databazy nebol pridany objekt: Majetok315 zo subora: inventuraVzor1.csv
+2020-03-20 13:18:00,140 - Inventura inventuraVzor1.csv obsahuje chybne udaje
+2020-03-20 13:18:00,160 - Do databazy nebol pridany objekt: Majetok11 zo subora: inventuraVzor2.csv
+2020-03-20 13:18:00,201 - Do databazy nebol pridany objekt: Majetok31100 zo subora: inventuraVzor2.csv
+2020-03-20 13:18:00,201 - Inventura inventuraVzor2.csv obsahuje chybne udaje
+2020-03-20 13:18:00,227 - Inventura inventuraVzor3.csv zaevidovana uspesne
+2020-03-20 13:18:00,266 - Inventura inventuraVzor4.csv zaevidovana uspesne
+2020-03-20 13:18:00,267 - Koniec kontroly
+2020-03-20 13:18:00,267 - Evidovanie 4 inventur do databazy. 2  uspesne a 2  neuspesne
+
+2020-03-20 13:18:22,930 - Priecinok je prazdny
+2020-03-20 13:18:22,930 - Koniec kontroly
+2020-03-20 13:18:22,930 - Evidovanie 0 inventur do databazy. 0  uspesne a 0  neuspesne
+

@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService {
         }
         else {
            throw new ResponseStatusException(
-                   HttpStatus.NOT_FOUND, "Ssername or password is wrong"
+                   HttpStatus.NOT_FOUND, "Username or password is wrong"
            );
         }
 
